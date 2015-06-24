@@ -39,9 +39,23 @@ describe("About Applying What We Have Learnt", function() {
 
       var productsICanEat = [];
 
-      /* solve using filter() & all() / any() */
+      var noNuts = _.filter(products, function(el, idx){
+        return el.containsNuts === false;
+      })
+      // console.log("this is noNuts: ", noNuts);
 
-      expect(productsICanEat.length).toBe(0);
+      var productsICanEat = _.filter(noNuts, function(el, idx){
+        // console.log(el.ingredients);
+
+        return _(el.ingredients).all(function(check) {
+               return check !== "mushrooms";
+             });
+
+      })
+
+      // console.log(productsICanEat)
+
+      expect(productsICanEat.length).toBe(1);
   });
 
   /*********************************************************************************/
@@ -60,7 +74,8 @@ describe("About Applying What We Have Learnt", function() {
 
   it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (functional)", function () {
 
-    var sum = 233168;    /* try chaining range() and reduce() */
+    var sum = _(_.range(0,1000)).chain()
+        .reduce(function(x, y){return y % 5 === 0 || y % 3 === 0 ? x + y : x; }).value()
 
     expect(233168).toBe(sum);
   });
@@ -81,9 +96,16 @@ describe("About Applying What We Have Learnt", function() {
   it("should count the ingredient occurrence (functional)", function () {
     var ingredientCount = { "{ingredient name}": 0 };
 
-    /* chain() together map(), flatten() and reduce() */
+    var occurrence = _(products).chain()
+      .map(function(products){
+        return products.ingredients
+      }).flatten().reduce(function(x, y) {
+        return (x + "," + y).split(",")
+      }).each(function(el) {
+        ingredientCount[el] = (ingredientCount[el] || 0) + 1;
+      })
 
-    expect(ingredientCount['mushrooms']).toBe(undefined);
+    expect(ingredientCount['mushrooms']).toBe(2);
   });
 
   /*********************************************************************************/
